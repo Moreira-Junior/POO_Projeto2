@@ -21,7 +21,11 @@ public class Evento {
 	
 	public double getTotalValorPago() {
 		BinaryOperator<Double> somatorio = (a, b) -> a + b;
-		return participantes.stream().map(p -> p.getValorPago(this.preco)).reduce(somatorio).get();
+		var valorTotal = participantes.stream().map(p -> p.getValorPago(this.preco)).reduce(somatorio);
+		if(valorTotal.isPresent()) {
+			return valorTotal.get();
+		}
+		return 0;
 	}
 	
 	public void adicionar(Participante participante) {
@@ -34,7 +38,12 @@ public class Evento {
 	
 	public double getIdadeMedia() {
 		BinaryOperator<Integer> somatorio = (a, b) -> a + b;
-		return participantes.stream().map(p -> p.getIdade()).reduce(somatorio).get()/(double)participantes.size();
+		Optional<Integer> somaIdade = participantes.stream().map(p -> p.getIdade()).reduce(somatorio);
+		int numeroDeParticipantes = participantes.size();
+		if(somaIdade.isPresent() && numeroDeParticipantes > 0) {
+			return somaIdade.get()*1.0/numeroDeParticipantes;
+		}
+		return 0;
 	}
 	
 	public ArrayList<Participante> getParticipantesPorIdade(int idade) {
